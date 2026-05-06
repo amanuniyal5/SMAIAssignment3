@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CropGuard AI LinkedIn Infographic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 32px 16px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .card {
+    width: 1080px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 44px 52px 40px;
+    position: relative;
+  }
+  .header-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .badge-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 4px 12px;
+    border-radius: 20px; letter-spacing: 0.4px;
+    border: 1px solid #bbf7d0; color: #15803d; background: #f0fdf4;
+  }
+  .badge-lime { border-color: #86efac; color: #166534; background: #dcfce7; }
+  .title {
+    font-size: 42px; font-weight: 800; color: #0f172a; line-height: 1.1;
+    letter-spacing: -1px; margin-bottom: 14px;
+  }
+  .title em { color: #16a34a; font-style: normal; }
+  .subtitle {
+    font-size: 14.5px; color: #475569; line-height: 1.6; max-width: 560px;
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    min-width: 240px;
+  }
+  .stat-box {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 16px 18px; text-align: center;
+  }
+  .stat-num {
+    font-size: 26px; font-weight: 800; color: #16a34a; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-lbl { font-size: 10px; color: #94a3b8; font-weight: 600; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.6px; }
+
+  /* ── BODY ── */
+  .body { padding: 36px 52px 40px; background: #ffffff; }
+
+  .section-label {
+    font-size: 10px; font-weight: 700; color: #16a34a; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+  /* ── PROBLEM / SOLUTION ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+
+  .prob-box {
+    background: #fff5f5; border: 1px solid #fecaca; border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .sol-box {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px;
+    padding: 20px 22px;
+  }
+  .box-head { font-size: 12.5px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .prob-box .box-head { color: #dc2626; }
+  .sol-box .box-head { color: #16a34a; }
+  .box-head-icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .prob-icon-bg { background: #fee2e2; }
+  .sol-icon-bg { background: #dcfce7; }
+  .box-text { font-size: 12.5px; color: #475569; line-height: 1.65; }
+
+  .pipeline { display: flex; align-items: center; margin-top: 14px; gap: 0; }
+  .pip-step {
+    background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px;
+    padding: 7px 8px; font-size: 10px; font-weight: 700; color: #15803d;
+    text-align: center; flex: 1; line-height: 1.3;
+  }
+  .pip-arrow { color: #86efac; font-size: 18px; font-weight: 700; padding: 0 3px; flex-shrink: 0; }
+
+  /* ── FEATURES ── */
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 32px; }
+  .feat-card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .feat-icon {
+    width: 34px; height: 34px; border-radius: 9px; background: #dcfce7;
+    border: 1px solid #86efac; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; font-size: 17px; color: #16a34a;
+  }
+  .feat-title { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .feat-desc { font-size: 11px; color: #64748b; line-height: 1.55; }
+
+  /* ── ABLATION ── */
+  .ablation-section { margin-bottom: 32px; }
+
+  .winner-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .winner-card {
+    border-radius: 14px; padding: 18px 20px; position: relative; overflow: hidden;
+  }
+  .w-acc { background: #f0fdf4; border: 1.5px solid #22c55e; }
+  .w-mob { background: #eff6ff; border: 1.5px solid #3b82f6; }
+  .winner-badge {
+    position: absolute; top: 10px; right: 12px; font-size: 9px; font-weight: 700;
+    padding: 3px 9px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+  }
+  .w-acc .winner-badge { background: #dcfce7; color: #15803d; }
+  .w-mob .winner-badge { background: #dbeafe; color: #1d4ed8; }
+  .winner-model { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .w-acc .winner-model { color: #16a34a; }
+  .w-mob .winner-model { color: #2563eb; }
+  .winner-metrics { display: flex; gap: 18px; margin: 8px 0; }
+  .winner-metric .m-val { font-size: 22px; font-weight: 800; display: block; }
+  .winner-metric .m-key { font-size: 10px; color: #94a3b8; }
+  .w-acc .m-val { color: #16a34a; }
+  .w-mob .m-val { color: #2563eb; }
+  .winner-note { font-size: 11px; color: #64748b; line-height: 1.5; }
+
+  /* ── BAR TABLE ── */
+  .bar-table {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .bar-row {
+    display: grid; grid-template-columns: 150px 1fr 110px 70px;
+    align-items: center; gap: 12px; padding: 10px 18px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-row.hdr { background: #f1f5f9; padding: 8px 18px; }
+  .bar-row.hdr span { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.8px; }
+  .arch-name { font-size: 12px; font-weight: 600; color: #1e293b; }
+  .arch-tag {
+    font-size: 9px; padding: 2px 7px; border-radius: 8px; margin-left: 5px; font-weight: 700;
+  }
+  .t-best { background: #dcfce7; color: #15803d; }
+  .t-mobile { background: #dbeafe; color: #1d4ed8; }
+  .t-low { background: #fee2e2; color: #dc2626; }
+  .bar-track { background: #e2e8f0; border-radius: 4px; height: 7px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-pct { font-size: 11.5px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .latency-val { font-size: 11px; color: #94a3b8; font-variant-numeric: tabular-nums; }
+
+  /* ── INSIGHT BOX ── */
+  .insight-box {
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
+    padding: 14px 18px; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .insight-icon { font-size: 18px; color: #d97706; flex-shrink: 0; margin-top: 1px; }
+  .insight-text { font-size: 12px; color: #78716c; line-height: 1.6; }
+  .insight-text strong { color: #b45309; }
+
+  /* ── HEATMAP ── */
+  .heatmap-section { margin-bottom: 32px; }
+  .heatmap-wrap { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px 18px; }
+  .heatmap-title { font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 14px; text-align: center; }
+  .heatmap-grid { display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 3px; font-size: 9.5px; font-family: 'DM Mono', monospace; }
+  .hm-header { font-size: 9px; font-weight: 700; color: #475569; text-align: center; padding: 4px 2px; display: flex; align-items: center; justify-content: center; }
+  .hm-row-label { font-size: 9.5px; color: #475569; font-weight: 600; display: flex; align-items: center; padding: 3px 4px; }
+  .hm-cell {
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; padding: 6px 2px; transition: transform 0.15s;
+  }
+  .hm-cell:hover { transform: scale(1.08); z-index: 1; position: relative; }
+
+  /* ── XAI SECTION ── */
+  .xai-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 32px; }
+  .xai-card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 16px 18px; text-align: center;
+  }
+  .xai-icon { font-size: 28px; color: #16a34a; margin-bottom: 8px; }
+  .xai-name { font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .xai-desc { font-size: 10.5px; color: #64748b; line-height: 1.5; }
+
+  /* ── DEPLOYMENT STRIP ── */
+  .deploy-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 32px; }
+  .deploy-pill {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 12px 10px; text-align: center;
+  }
+  .deploy-icon { font-size: 20px; color: #16a34a; margin-bottom: 6px; }
+  .deploy-name { font-size: 10px; font-weight: 700; color: #334155; }
+  .deploy-sub { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #f8fafc; border-top: 1px solid #e2e8f0;
+    padding: 24px 52px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .footer-left { }
+  .footer-headline { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .footer-sub { font-size: 11px; color: #64748b; }
+  .tag-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .hashtag { font-size: 11px; color: #16a34a; font-weight: 600; }
+  .footer-stack {
+    display: flex; gap: 8px; flex-direction: column; align-items: flex-end;
+  }
+  .stack-pill {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+    padding: 6px 14px; font-size: 11px; font-weight: 600; color: #15803d;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-grid">
+      <div>
+        <div class="badge-row">
+          <span class="badge badge-lime">PlantVillage Dataset</span>
+          <span class="badge">38 Disease Classes</span>
+          <span class="badge">14 Crops</span>
+          <span class="badge">Ablation Study</span>
+          <span class="badge">Indian AgriTech</span>
+        </div>
+        <h1 class="title">CropGuard <em>AI</em><br>Edge Optimised Crop Disease Detection</h1>
+        <p class="subtitle">Empowering Indian farmers with instant, field-ready diagnoses and actionable treatment advice from a smartphone camera shot of a leaf.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">97.7%</div>
+          <div class="stat-lbl">Peak Accuracy</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">11.4ms</div>
+          <div class="stat-lbl">Mobile Latency</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">5</div>
+          <div class="stat-lbl">Architectures</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">54K+</div>
+          <div class="stat-lbl">Training Images</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- PROBLEM / SOLUTION -->
+    <div class="section-label">The Context</div>
+    <div class="two-col">
+      <div class="prob-box">
+        <div class="box-head">
+          <div class="box-head-icon prob-icon-bg"><i class="ti ti-alert-triangle" style="color:#f87171;font-size:14px" aria-hidden="true"></i></div>
+          The Problem
+        </div>
+        <div class="box-text">Indian agriculture loses crores every year to misdiagnosed crop disease. A farmer photographs a sick leaf with their phone, but farmers lack instant expert-level diagnostic tools in the field, relying on guesswork or delayed consultations that cost critical treatment windows.</div>
+      </div>
+      <div class="sol-box">
+        <div class="box-head">
+          <div class="box-head-icon sol-icon-bg"><i class="ti ti-shield-check" style="color:#4ade80;font-size:14px" aria-hidden="true"></i></div>
+          The Solution & Work Done
+        </div>
+        <div class="box-text">We built a unified Streamlit web app and PWA for 14 crops. By fine-tuning a MobileNetV3-Small architecture for 3 epochs on the PlantVillage dataset, it predicts among 38 disease classes. It provides a confidence bar, a farmer-friendly explanation (JSON cache), and actionable next steps.</div>
+        <div class="pipeline" style="margin-top:14px">
+          <div class="pip-step"><i class="ti ti-camera" aria-hidden="true"></i><br>Leaf Photo</div>
+          <div class="pip-arrow">›</div>
+          <div class="pip-step"><i class="ti ti-brain" aria-hidden="true"></i><br>Predict (TFLite)</div>
+          <div class="pip-arrow">›</div>
+          <div class="pip-step"><i class="ti ti-chart-pie" aria-hidden="true"></i><br>Confidence Map</div>
+          <div class="pip-arrow">›</div>
+          <div class="pip-step"><i class="ti ti-pill" aria-hidden="true"></i><br>Action Plan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section-label">Core App Features</div>
+    <div class="features-grid" style="margin-bottom:32px">
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">Offline-ready PWA + TFLite</div>
+          <div class="feat-desc">On-device inference via MobileNetV3-Small → TFLite. No internet needed in the field.</div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-eye" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">XAI Interpretability Suite</div>
+          <div class="feat-desc">GradCAM, SHAP, LIME &amp; Occlusion Maps show farmers why the AI flagged a leaf region.</div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-currency-rupee" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">Treatment Cost Estimator</div>
+          <div class="feat-desc">Chemical recommendations with ₹-per-acre cost + Open-Meteo weather-risk correlation.</div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-notebook" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">SQLite Field Diary</div>
+          <div class="feat-desc">Tracks infection progression over time. WhatsApp report card for agronomist sharing.</div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-microscope" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">Ablation Study Dashboard</div>
+          <div class="feat-desc">5-architecture comparison on accuracy vs. latency with experiment SQLite tracker.</div>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon"><i class="ti ti-brand-docker" aria-hidden="true"></i></div>
+        <div>
+          <div class="feat-title">Docker Multi-Service</div>
+          <div class="feat-desc">docker-compose bundles main app, ablation dashboard, and experiment tracker together.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT IMPACT -->
+    <div class="section-label">Real-World Impact</div>
+    <div class="insight-box" style="margin-bottom: 32px; background: #f0fdf4; border-color: #bbf7d0;">
+      <i class="ti ti-leaf insight-icon" style="color: #16a34a;" aria-hidden="true"></i>
+      <div class="insight-text" style="color: #15803d; font-size: 13px;">
+        <strong>Why it matters:</strong> Indian farmers face massive crop losses due to difficult-to-diagnose diseases visually similar to the naked eye. By packaging an accurate MobileNetV3 model in an offline-ready PWA with 11.4ms edge latency, we bring expert-level tools to the field. Actionable, instant, and data-driven crop management is now in the pocket of any farmer with a smartphone!
+      </div>
+    </div>
+
+    <!-- DEPLOYMENT STRIP -->
+    <div class="section-label">Deployment &amp; Export Stack</div>
+    <div class="deploy-row">
+      <div class="deploy-pill">
+        <div class="deploy-icon"><i class="ti ti-brand-python" aria-hidden="true"></i></div>
+        <div class="deploy-name">PyTorch</div>
+        <div class="deploy-sub">.pth web inference</div>
+      </div>
+      <div class="deploy-pill">
+        <div class="deploy-icon"><i class="ti ti-device-mobile" aria-hidden="true"></i></div>
+        <div class="deploy-name">TFLite</div>
+        <div class="deploy-sub">Android / edge</div>
+      </div>
+      <div class="deploy-pill">
+        <div class="deploy-icon"><i class="ti ti-brand-docker" aria-hidden="true"></i></div>
+        <div class="deploy-name">Docker</div>
+        <div class="deploy-sub">multi-service compose</div>
+      </div>
+      <div class="deploy-pill">
+        <div class="deploy-icon"><i class="ti ti-world" aria-hidden="true"></i></div>
+        <div class="deploy-name">PWA</div>
+        <div class="deploy-sub">manifest.json install</div>
+      </div>
+      <div class="deploy-pill">
+        <div class="deploy-icon"><i class="ti ti-database" aria-hidden="true"></i></div>
+        <div class="deploy-name">SQLite</div>
+        <div class="deploy-sub">field diary + tracker</div>
+      </div>
+    </div>
+
+  </div><!-- end body -->
+
+  <!-- FOOTER -->
+  <div class="footer" style="display: grid; grid-template-columns: 1.2fr 1fr auto; gap: 32px; padding: 36px 52px; align-items: start;">
+    
+    <!-- Column 1: Brand & Links -->
+    <div class="footer-col">
+      <div class="footer-headline" style="font-size: 15px; margin-bottom: 12px;">CropGuard AI</div>
+      <div style="font-size: 11px; color: #475569; line-height: 1.8; margin-bottom: 14px;">
+        <div style="display: flex; gap: 6px;">
+          <strong style="color: #0f172a;">Live Demo:</strong>
+          <span style="color: #2563eb;">amansrivastava808-smaiassignment3-app-i4zar0.streamlit.app</span>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <strong style="color: #0f172a;">GitHub:</strong>
+          <span style="color: #2563eb;">github.com/amanuniyal5/SMAIAssignment3.git</span>
+        </div>
+      </div>
+      <div class="tag-strip">
+        <span class="hashtag">#MachineLearning</span>
+        <span class="hashtag">#AgriTech</span>
+        <span class="hashtag">#ComputerVision</span>
+        <span class="hashtag">#Streamlit</span>
+        <span class="hashtag">#SMAI</span>
+        <span class="hashtag">#DeepLearning</span>
+        <span class="hashtag">#PlantDisease</span>
+        <span class="hashtag">#EdgeAI</span>
+        <span class="hashtag">#MobileNetV3</span>
+        <span class="hashtag">#Pytorch</span>
+      </div>
+    </div>
+
+    <!-- Column 2: Tech & Team -->
+    <div class="footer-col" style="font-size: 10.5px; color: #475569; line-height: 1.7;">
+      <div style="color: #0f172a; font-weight: 700; margin-bottom: 6px; font-size: 11px;">Under the Hood</div>
+      <div><strong>Models:</strong> MobileNetV3-Small (Edge) / ViT-Tiny</div>
+      <div><strong>Deployment:</strong> Streamlit Community Cloud</div>
+      <div><strong>AI Tools:</strong> Gemini (Guides) / Claude (Debugging)</div>
+      
+      <div style="color: #0f172a; font-weight: 700; margin-top: 14px; margin-bottom: 6px; font-size: 11px;">The Team</div>
+      <div style="line-height: 1.4;">Aman Srivastava • Amna Uniyal • Ekansh Goyal<br>Devansh Magotra • Himank Singhvi<br>Deepraj Chaudhary • Rohan Agarwal</div>
+    </div>
+
+    <!-- Column 3: Stack Badges -->
+    <div class="footer-stack" style="margin-top: 4px;">
+      <div class="stack-pill" style="background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8;">MobileNetV3 · ViT-Tiny</div>
+      <div class="stack-pill">Streamlit · TFLite</div>
+      <div class="stack-pill" style="background: #f8fafc; border-color: #e2e8f0; color: #475569;">PlantVillage · 54K images · 38 classes</div>
+    </div>
+
+  </div>
+
+</div><!-- end card -->
+</body>
+</html>
