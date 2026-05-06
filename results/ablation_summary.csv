@@ -1,0 +1,6 @@
+Model,Val Acc,Test Acc,Macro F1,Params (M),Latency (ms),Train (min)
+MobileNetV3-Small,0.979,0.9777,0.972,1.56,11.37,9.7
+EfficientNet-B0,0.9761,0.9761,0.9673,4.06,29.98,10.9
+ResNet-18,0.8926,0.8936,0.805,11.2,34.16,9.5
+EfficientNet-B2,0.9926,0.9899,0.9868,7.75,71.95,21.7
+ViT-Tiny,0.9932,0.9943,0.9922,5.53,24.23,10.0

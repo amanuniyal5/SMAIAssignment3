@@ -39,15 +39,19 @@ class GradCAM:
         self.model        = model
         self.target_layer = target_layer
         self._features    = None
-        self._gradients   = None
+        self._gradients = None
+        # Use simpler backward hook without inplace issues by registering on tensor wrapper if possible,
+        # or backward hook directly onto the tensor.
         self._fwd_hook    = target_layer.register_forward_hook(self._save_features)
-        self._bwd_hook    = target_layer.register_full_backward_hook(self._save_grads)
 
     def _save_features(self, module, input, output):
-        self._features = output.detach()
-
-    def _save_grads(self, module, grad_input, grad_output):
-        self._gradients = grad_output[0].detach()
+        self._features = output
+        # Instead of module bwd hook, register on the tensor itself
+        def _tensor_hook(grad):
+            self._gradients = grad
+        if output.requires_grad:
+            self._bwd_hook = output.register_hook(_tensor_hook)
+        return output
 
     def __call__(self, x: torch.Tensor, class_idx: int = None) -> np.ndarray:
         """
@@ -61,11 +65,17 @@ class GradCAM:
         x = x.requires_grad_(True)
 
         logits = self.model(x)
+        
+        # Clone the logits to avoid the in-place modification bug in backward hook
+        # for some model architectures where the output is a view.
+        logits = logits.clone()
+        
         if class_idx is None:
             class_idx = logits.argmax(dim=1).item()
 
         self.model.zero_grad()
-        logits[0, class_idx].backward()
+        loss = logits[0, class_idx]
+        loss.backward(retain_graph=True)
 
         # Global average pool the gradients
         weights   = self._gradients.mean(dim=(2, 3), keepdim=True)  # (1, C, 1, 1)
@@ -85,8 +95,10 @@ class GradCAM:
         return cam.squeeze().cpu().numpy()
 
     def remove_hooks(self):
-        self._fwd_hook.remove()
-        self._bwd_hook.remove()
+        if hasattr(self, '_fwd_hook') and self._fwd_hook:
+            self._fwd_hook.remove()
+        if hasattr(self, '_bwd_hook') and self._bwd_hook:
+            self._bwd_hook.remove()
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -118,7 +130,8 @@ def overlay_heatmap(
     h_arr = np.array(h_pil) / 255.0
 
     # Apply colormap
-    cmap      = cm.get_cmap(colormap)
+    import matplotlib as mpl
+    cmap      = mpl.colormaps.get_cmap(colormap)
     heat_rgb  = cmap(h_arr)[:, :, :3]          # (H, W, 3) in [0,1]
     heat_uint = (heat_rgb * 255).astype(np.uint8)
     heat_pil  = Image.fromarray(heat_uint, "RGB")
@@ -162,8 +175,12 @@ def get_target_layer(model: torch.nn.Module, timm_name: str) -> torch.nn.Module:
 
     if "mobilenetv3" in name:
         # Last conv before adaptive pool
-        return model.blocks[-1][-1].conv_dw if hasattr(model, "blocks") \
-               else list(model.children())[-3]
+        try:
+            # We want the outmost module before pooling to avoid deep view inplace bugs in MBV3
+            return list(model.children())[-3]
+        except (AttributeError, IndexError):
+            # For newer timm mobilenet versions
+            return model.conv_head
 
     elif "efficientnet" in name:
         return model.blocks[-1][-1]

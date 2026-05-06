@@ -235,7 +235,7 @@ def main():
                         help="Path to a single .pth checkpoint")
     parser.add_argument("--compare", type=str, nargs="+",
                         help="Two or more .pth files to compare side-by-side")
-    parser.add_argument("--data",    type=str, default="plantvillage_sample",
+    parser.add_argument("--data",    type=str, default="../plantvillage_sample",
                         help="ImageFolder or flat directory of test images")
     parser.add_argument("--output",  type=str, default=None,
                         help="Save results to this JSON file")

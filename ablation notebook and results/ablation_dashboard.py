@@ -39,28 +39,33 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
-html, body, [class*="css"] { font-family: 'Sora', sans-serif; }
+html, body, [class*="css"] {
+  font-family: 'Sora', sans-serif;
+  color: #e5e7eb; /* Light gray for better readability on dark bg */
+}
+h1, h2, h3, h4, h5, h6 { color: #e5e7eb; }
+.st-emotion-cache-16txtl3 { color: #e5e7eb; } /* Main text color */
 .main .block-container { padding-top: 1.2rem; max-width: 1300px; }
 .hero {
   background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
   border-radius: 14px; padding: 24px 32px; margin-bottom: 20px;
-  box-shadow: 0 8px 32px rgba(49,46,129,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 .hero h1 { color: #e0e7ff; font-size: 1.8rem; font-weight: 800; margin: 0; }
 .hero p  { color: #a5b4fc; margin: 6px 0 0; font-size: 0.9rem; }
 .metric-card {
-  background: white; border-radius: 12px; padding: 16px 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07); border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
   text-align: center;
 }
 .metric-val { font-size: 1.7rem; font-weight: 800; }
-.metric-lbl { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
+.metric-lbl { font-size: 0.78rem; color: #9ca3af; margin-top: 2px; }
 .winner-badge {
   display:inline-block; background:#059669; color:white;
   padding:2px 10px; border-radius:20px; font-size:0.75rem; font-weight:700;
 }
 .section-title {
-  font-size: 1.1rem; font-weight: 700; color: #1e1b4b;
+  font-size: 1.1rem; font-weight: 700; color: #e5e7eb;
   border-left: 4px solid #6366f1; padding-left: 10px; margin: 24px 0 12px;
 }
 footer { visibility: hidden; }
@@ -248,18 +253,27 @@ best_f1  = df["Macro F1"].max()
 best_lat = df["Latency (ms)"].replace(0, np.nan).min()
 
 def highlight_best(s):
-    if s.name in ("Test Acc", "Val Acc", "Macro F1"):
-        return ["background-color:#d1fae5;font-weight:700"
-                if v == s.max() else "" for v in s]
-    if s.name == "Latency (ms)":
-        nonzero = s.replace(0, np.nan)
-        return ["background-color:#dbeafe;font-weight:700"
-                if v == nonzero.min() else "" for v in s]
-    if s.name == "Params (M)":
-        nonzero = s.replace(0, np.nan)
-        return ["background-color:#fef3c7;font-weight:700"
-                if v == nonzero.min() else "" for v in s]
-    return [""] * len(s)
+    is_max_best = s.name in ("Test Acc", "Val Acc", "Macro F1")
+    is_min_best = s.name in ("Latency (ms)", "Params (M)")
+
+    if not is_max_best and not is_min_best:
+        return [""] * len(s)
+
+    # For latency and params, 0 is not a valid value for comparison
+    s_numeric = pd.to_numeric(s, errors='coerce')
+    if is_min_best:
+        valid_s = s_numeric[s_numeric > 0]
+        best_val = valid_s.min()
+    else: # is_max_best
+        valid_s = s_numeric
+        best_val = valid_s.max()
+
+    if pd.isna(best_val):
+        return [""] * len(s)
+
+    # Remove background color entirely, just use bold text
+    style = "font-weight:900; color:#10b981;"
+    return [style if v == best_val else "" for v in s_numeric]
 
 styled = df.style\
     .apply(highlight_best)\
@@ -440,7 +454,10 @@ if has_cm and class_names:
 
     fig5, ax5 = plt.subplots(figsize=(max(16, len(class_names)*0.52),
                                        max(12, len(class_names)*0.52)))
-    sns.heatmap(cm_norm, annot=False,
+    # Display raw counts, but color by normalized value
+    annot_arr = cm_arr if cm_arr.max() > 1 else cm_norm
+    annot_fmt = "d" if cm_arr.max() > 1 else ".2f"
+    sns.heatmap(cm_norm, annot=annot_arr, fmt=annot_fmt,
                 xticklabels=short_cls, yticklabels=short_cls,
                 cmap="Blues", vmin=0, vmax=1,
                 linewidths=0.2, linecolor="#f3f4f6",
@@ -562,10 +579,10 @@ if rows:
 
     st.markdown("""
     <br>
-    <div style="background:#f5f3ff;border-radius:12px;padding:18px 24px;
-                border:1px solid #c7d2fe;font-size:0.92rem;line-height:1.7">
+    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:18px 24px;
+                border:1px solid rgba(255,255,255,0.1);font-size:0.92rem;line-height:1.7;color:#e5e7eb">
       <b>Key Takeaways:</b>
-      <ul style="margin:8px 0 0 16px;color:#374151">
+      <ul style="margin:8px 0 0 16px;color:#d1d5db">
         <li><b>MobileNetV3-Small</b> is ideal for mobile/edge deployment — smallest model, fastest inference, competitive accuracy.</li>
         <li><b>EfficientNet-B0/B2</b> offer the best accuracy-efficiency tradeoff for server-side deployment.</li>
         <li><b>ResNet-18</b> is a strong baseline but larger than EfficientNets at similar accuracy.</li>
