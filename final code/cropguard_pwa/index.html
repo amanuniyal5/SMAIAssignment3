@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CropGuard AI</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#064e3b"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="CropGuard"/>
+<meta name="description" content="AI crop disease detector. Works offline."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:#0a1628;color:#f1f5f9;min-height:100vh}
+.hero{background:linear-gradient(135deg,#064e3b,#047857);padding:20px 24px;display:flex;align-items:center;gap:14px}
+.hero-icon{font-size:2.4rem}
+.hero h1{font-size:1.5rem;font-weight:800;color:#ecfdf5}
+.hero p{font-size:0.82rem;color:#a7f3d0;margin-top:2px}
+.container{max-width:480px;margin:0 auto;padding:20px 16px}
+.card{background:#1e293b;border-radius:14px;padding:20px;margin-bottom:16px;border:1px solid #334155}
+.card h2{font-size:1rem;font-weight:700;color:#a7f3d0;margin-bottom:14px}
+.upload-zone{border:2px dashed #334155;border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:#10b981;background:#0f2a1e}
+.upload-zone .icon{font-size:2.5rem;margin-bottom:10px}
+.upload-zone p{color:#94a3b8;font-size:0.88rem}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,#059669,#047857);color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{background:#334155;color:#64748b;cursor:not-allowed;transform:none}
+.btn-cam{background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6;margin-bottom:10px}
+.preview-wrap{position:relative;margin-bottom:14px}
+#preview{width:100%;border-radius:10px;display:none;max-height:280px;object-fit:cover}
+.remove-btn{position:absolute;top:8px;right:8px;background:#ef4444;color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
+.result-card{background:#0f2a1e;border:1px solid #10b981;border-radius:14px;padding:20px;display:none}
+.result-name{font-size:1.25rem;font-weight:800;color:#ecfdf5;margin-bottom:6px}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;margin-bottom:12px}
+.badge-none{background:#22c55e;color:#fff}
+.badge-moderate{background:#f59e0b;color:#fff}
+.badge-high{background:#ef4444;color:#fff}
+.badge-critical{background:#7c3aed;color:#fff}
+.conf-label{font-size:0.78rem;color:#64748b;margin-bottom:4px}
+.conf-bar{background:#1e293b;border-radius:99px;height:10px;overflow:hidden;margin-bottom:6px}
+.conf-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.conf-pct{font-size:1.1rem;font-weight:800}
+.desc{color:#94a3b8;font-size:0.88rem;line-height:1.6;margin:12px 0}
+.action-box{background:#052e16;border:1px solid #16a34a;border-radius:10px;padding:14px;margin-top:10px}
+.action-box h4{color:#86efac;font-size:0.75rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.action-box p{color:#4ade80;font-size:0.88rem;line-height:1.5}
+.alt-list{margin-top:14px}
+.alt-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#1e293b;border-radius:8px;margin-bottom:6px;font-size:0.82rem}
+.alt-name{color:#cbd5e1}
+.alt-conf{font-weight:700}
+.weather-box{background:#1c1a05;border:1px solid #ca8a04;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:0.85rem}
+.weather-box b{color:#fde68a}
+.status{text-align:center;padding:20px;color:#64748b;display:none}
+.spinner{width:36px;height:36px;border:3px solid #334155;border-top-color:#10b981;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.install-bar{background:#1e3a5f;border:1px solid #3b82f6;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:none;align-items:center;justify-content:space-between;gap:10px}
+.install-bar span{font-size:0.85rem;color:#93c5fd}
+.install-bar button{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Sora',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap}
+.offline-badge{display:none;background:#7c3aed;color:#fff;font-size:0.72rem;padding:3px 10px;border-radius:20px;font-weight:700}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.top-bar h3{font-size:0.9rem;color:#94a3b8}
+.lang-sel{background:#1e293b;color:#f1f5f9;border:1px solid #334155;border-radius:8px;padding:4px 8px;font-family:'Sora',sans-serif;font-size:0.8rem}
+#camModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;flex-direction:column;align-items:center;justify-content:center}
+#camModal.open{display:flex}
+#camVideo{width:90vw;max-width:420px;border-radius:12px}
+.cam-btns{display:flex;gap:12px;margin-top:16px}
+.cam-btns button{padding:12px 24px;border-radius:10px;border:none;font-family:'Sora',sans-serif;font-weight:700;cursor:pointer;font-size:0.95rem}
+#snapBtn{background:#10b981;color:#fff}
+#closeCam{background:#ef4444;color:#fff}
+.error-msg{background:#2d0f0f;border:1px solid #ef4444;border-radius:10px;padding:14px;color:#fca5a5;font-size:0.85rem;display:none;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-icon">🌿</div>
+  <div>
+    <h1>CropGuard AI</h1>
+    <p>Offline crop disease detection · 38 diseases · 14 crops</p>
+  </div>
+  <span class="offline-badge" id="offlineBadge">OFFLINE</span>
+</div>
+
+<div class="container">
+
+  <!-- Install prompt -->
+  <div class="install-bar" id="installBar">
+    <span>📲 Install CropGuard on your phone for offline use</span>
+    <button id="installBtn">Install</button>
+  </div>
+
+  <!-- Camera modal -->
+  <div id="camModal">
+    <video id="camVideo" autoplay playsinline></video>
+    <div class="cam-btns">
+      <button id="snapBtn">📸 Capture</button>
+      <button id="closeCam">✕ Close</button>
+    </div>
+    <canvas id="snapCanvas" style="display:none"></canvas>
+  </div>
+
+  <!-- Upload card -->
+  <div class="card">
+    <div class="top-bar">
+      <h2 style="margin:0">📸 Upload Leaf</h2>
+      <select class="lang-sel" id="langSel">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="te">తెలుగు</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </div>
+
+    <button class="btn btn-cam" id="openCam">📷 Use Camera</button>
+
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="fileInput" accept="image/*"/>
+      <div class="icon">🌿</div>
+      <p id="uploadText">Tap to upload a leaf photo</p>
+    </div>
+
+    <div class="preview-wrap" style="margin-top:14px">
+      <img id="preview"/>
+      <button class="remove-btn" id="removeBtn">✕</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <button class="btn btn-primary" id="analyseBtn" disabled style="margin-top:14px">
+      🔍 Analyse Leaf
+    </button>
+  </div>
+
+  <!-- Status -->
+  <div class="status" id="status">
+    <div class="spinner"></div>
+    <div id="statusText">Loading AI model…</div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-name" id="rName"></div>
+    <span class="badge" id="rBadge"></span>
+    <div class="conf-label" id="confLabel">Model confidence</div>
+    <div class="conf-bar"><div class="conf-fill" id="confFill"></div></div>
+    <div class="conf-pct" id="confPct"></div>
+    <p class="desc" id="rDesc"></p>
+    <div class="action-box" id="actionBox">
+      <h4>✅ Recommended Action</h4>
+      <p id="rAction"></p>
+    </div>
+    <div class="weather-box" id="weatherBox" style="display:none"></div>
+    <details style="margin-top:14px">
+      <summary style="color:#64748b;font-size:0.82rem;cursor:pointer">Top-5 alternatives</summary>
+      <div class="alt-list" id="altList"></div>
+    </details>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ONNX Runtime Web -->
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.0/dist/ort.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CropGuard PWA — ONNX inference + full UI logic
+// ═══════════════════════════════════════════════════════════════
+
+// ── Register service worker ────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(() => console.log('[SW] Registered'))
+    .catch(e => console.warn('[SW] Failed:', e));
+}
+
+// ── Offline badge ──────────────────────────────────────────────
+const offlineBadge = document.getElementById('offlineBadge');
+function updateOnline() {
+  offlineBadge.style.display = navigator.onLine ? 'none' : 'inline-block';
+}
+window.addEventListener('online', updateOnline);
+window.addEventListener('offline', updateOnline);
+updateOnline();
+
+// ── Install prompt ─────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBar').style.display = 'flex';
+});
+document.getElementById('installBtn').addEventListener('click', () => {
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+  document.getElementById('installBar').style.display = 'none';
+});
+
+// ── Translations ───────────────────────────────────────────────
+const TR = {
+  en: { upload: 'Tap to upload a leaf photo', analyse: '🔍 Analyse Leaf',
+        conf: 'Model confidence', action: '✅ Recommended Action', analysing: 'Analysing leaf…' },
+  hi: { upload: 'पत्ती की फोटो अपलोड करें', analyse: '🔍 पत्ती की जाँच करें',
+        conf: 'मॉडल की विश्वसनीयता', action: '✅ सुझाया गया उपाय', analysing: 'पत्ती का विश्लेषण…' },
+  te: { upload: 'ఆకు ఫోటో అప్‌లోడ్ చేయండి', analyse: '🔍 ఆకును విశ్లేషించండి',
+        conf: 'మోడల్ నమ్మకం', action: '✅ సిఫారసు చేయబడిన చర్య', analysing: 'ఆకును విశ్లేషిస్తోంది…' },
+  mr: { upload: 'पानाचा फोटो अपलोड करा', analyse: '🔍 पान तपासा',
+        conf: 'मॉडेलचा आत्मविश्वास', action: '✅ शिफारस केलेली कृती', analysing: 'पान विश्लेषण…' },
+};
+let lang = 'en';
+document.getElementById('langSel').addEventListener('change', e => {
+  lang = e.target.value;
+  document.getElementById('uploadText').textContent = TR[lang].upload;
+  document.getElementById('analyseBtn').textContent = TR[lang].analyse;
+  document.getElementById('confLabel').textContent = TR[lang].conf;
+});
+
+// ── State ──────────────────────────────────────────────────────
+let session = null;
+let classNames = [];
+let diseaseInfo = {};
+let activeImage = null;   // HTMLImageElement or canvas
+
+const preview     = document.getElementById('preview');
+const removeBtn   = document.getElementById('removeBtn');
+const analyseBtn  = document.getElementById('analyseBtn');
+const statusDiv   = document.getElementById('status');
+const statusText  = document.getElementById('statusText');
+const errorMsg    = document.getElementById('errorMsg');
+
+// ── Show/hide helpers ──────────────────────────────────────────
+function showStatus(msg) {
+  statusDiv.style.display = 'block';
+  statusText.textContent = msg;
+  document.getElementById('resultCard').style.display = 'none';
+}
+function hideStatus() { statusDiv.style.display = 'none'; }
+function showError(msg) {
+  errorMsg.textContent = msg;
+  errorMsg.style.display = 'block';
+}
+function clearError() { errorMsg.style.display = 'none'; }
+
+// ── Load JSON data ─────────────────────────────────────────────
+async function loadData() {
+  const [cn, di] = await Promise.all([
+    fetch('./class_names.json').then(r => r.json()),
+    fetch('./disease_info.json').then(r => r.json()),
+  ]);
+  classNames  = Array.isArray(cn) ? cn : Object.keys(cn);
+  diseaseInfo = di;
+}
+
+// ── Load ONNX model ────────────────────────────────────────────
+async function loadModel() {
+  showStatus('Loading AI model (first load may take a moment)…');
+  ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.0/dist/';
+  session = await ort.InferenceSession.create('./model.onnx', {
+    executionProviders: ['wasm'],
+  });
+  hideStatus();
+}
+
+// ── Initialise ─────────────────────────────────────────────────
+(async () => {
+  try {
+    showStatus('Loading data…');
+    await loadData();
+    await loadModel();
+    console.log('[CropGuard] Ready. Classes:', classNames.length);
+  } catch(e) {
+    hideStatus();
+    showError('Failed to load model: ' + e.message + '. Make sure model.onnx is in the same folder.');
+    console.error(e);
+  }
+})();
+
+// ── Image preprocessing → Float32Array [1,3,224,224] ──────────
+const MEAN = [0.485, 0.456, 0.406];
+const STD  = [0.229, 0.224, 0.225];
+const IMG_SIZE = 224;
+
+function preprocessImage(imgEl) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = IMG_SIZE;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(imgEl, 0, 0, IMG_SIZE, IMG_SIZE);
+  const { data } = ctx.getImageData(0, 0, IMG_SIZE, IMG_SIZE);
+  const tensor = new Float32Array(3 * IMG_SIZE * IMG_SIZE);
+  for (let i = 0; i < IMG_SIZE * IMG_SIZE; i++) {
+    tensor[i]                       = (data[i*4]   / 255 - MEAN[0]) / STD[0]; // R
+    tensor[i + IMG_SIZE*IMG_SIZE]   = (data[i*4+1] / 255 - MEAN[1]) / STD[1]; // G
+    tensor[i + IMG_SIZE*IMG_SIZE*2] = (data[i*4+2] / 255 - MEAN[2]) / STD[2]; // B
+  }
+  return tensor;
+}
+
+// ── Softmax ───────────────────────────────────────────────────
+function softmax(arr) {
+  const max = Math.max(...arr);
+  const exps = arr.map(x => Math.exp(x - max));
+  const sum  = exps.reduce((a,b) => a+b, 0);
+  return exps.map(x => x / sum);
+}
+
+// ── Run inference ──────────────────────────────────────────────
+async function runInference(imgEl) {
+  if (!session) throw new Error('Model not loaded yet');
+  const flat = preprocessImage(imgEl);
+  const tensor = new ort.Tensor('float32', flat, [1, 3, IMG_SIZE, IMG_SIZE]);
+  const feeds  = { [session.inputNames[0]]: tensor };
+  const out    = await session.run(feeds);
+  const logits = Array.from(out[session.outputNames[0]].data);
+  const probs  = softmax(logits);
+  const indexed = probs.map((p, i) => [classNames[i] || `class_${i}`, p]);
+  indexed.sort((a, b) => b[1] - a[1]);
+  return indexed.slice(0, 5);
+}
+
+// ── Lookup disease info ────────────────────────────────────────
+function lookupDisease(rawClass) {
+  if (diseaseInfo[rawClass]) return diseaseInfo[rawClass];
+  const norm = s => s.toLowerCase().replace(/[\s_]+/g,' ').trim();
+  const rn   = norm(rawClass);
+  for (const [k, v] of Object.entries(diseaseInfo)) {
+    if (norm(k) === rn) return v;
+  }
+  for (const [k, v] of Object.entries(diseaseInfo)) {
+    if (norm(k).includes(rn) || rn.includes(norm(k))) return v;
+  }
+  return null;
+}
+
+// ── Severity colors ────────────────────────────────────────────
+const SEV_COLOR = {
+  none: '#22c55e', moderate: '#f59e0b', high: '#ef4444', critical: '#7c3aed'
+};
+const SEV_BADGE_CLASS = {
+  none: 'badge-none', moderate: 'badge-moderate',
+  high: 'badge-high', critical: 'badge-critical'
+};
+const SEV_LABEL = {
+  en: { none:'HEALTHY', moderate:'MODERATE', high:'HIGH RISK', critical:'CRITICAL' },
+  hi: { none:'स्वस्थ', moderate:'मध्यम', high:'उच्च खतरा', critical:'गंभीर' },
+  te: { none:'ఆరోగ్యంగా', moderate:'మధ్యస్థ', high:'అధిక ప్రమాదం', critical:'విమర్శనాత్మక' },
+  mr: { none:'निरोगी', moderate:'मध्यम धोका', high:'उच्च धोका', critical:'गंभीर' },
+};
+
+// ── Display results ────────────────────────────────────────────
+function displayResults(preds) {
+  const [topClass, topConf] = preds[0];
+  const info = lookupDisease(topClass) || {};
+  const name    = info.display_name || topClass.replace(/_/g,' ');
+  const sev     = info.severity || 'moderate';
+  const desc    = info.description || '';
+  const action  = info.action || '';
+  const emoji   = info.emoji || '🌿';
+  const color   = SEV_COLOR[sev] || '#6b7280';
+  const pct     = (topConf * 100).toFixed(1);
+
+  document.getElementById('rName').textContent    = emoji + ' ' + name;
+  const badge = document.getElementById('rBadge');
+  badge.textContent  = SEV_LABEL[lang]?.[sev] || sev.toUpperCase();
+  badge.className    = 'badge ' + (SEV_BADGE_CLASS[sev] || '');
+  document.getElementById('confFill').style.width      = pct + '%';
+  document.getElementById('confFill').style.background = color;
+  document.getElementById('confPct').textContent        = pct + '%';
+  document.getElementById('confPct').style.color        = color;
+  document.getElementById('rDesc').textContent           = desc;
+  document.getElementById('rAction').textContent         = action;
+
+  // Alternatives
+  const altList = document.getElementById('altList');
+  altList.innerHTML = '';
+  preds.slice(1).forEach(([cls, conf], i) => {
+    const ai   = lookupDisease(cls) || {};
+    const an   = ai.display_name || cls.replace(/_/g,' ');
+    const ae   = ai.emoji || '🌿';
+    const ac   = SEV_COLOR[ai.severity] || '#6b7280';
+    const ap   = (conf*100).toFixed(1);
+    altList.innerHTML += `
+      <div class="alt-item">
+        <span class="alt-name">${i+2}. ${ae} ${an}</span>
+        <span class="alt-conf" style="color:${ac}">${ap}%</span>
+      </div>`;
+  });
+
+  document.getElementById('resultCard').style.display = 'block';
+
+  // Weather risk (optional, needs location)
+  if (navigator.geolocation) {
+    fetchWeatherRisk(topClass);
+  }
+}
+
+// ── Weather risk from geolocation ─────────────────────────────
+function fetchWeatherRisk(diseaseClass) {
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+        + `&current=temperature_2m,relative_humidity_2m,precipitation&timezone=auto&forecast_days=1`;
+      const data = await fetch(url).then(r => r.json());
+      const c = data.current;
+      const wb = document.getElementById('weatherBox');
+      wb.style.display = 'block';
+      wb.innerHTML = `<b>🌦 Today's spread risk</b><br>
+        🌡 ${c.temperature_2m}°C &nbsp;
+        💧 ${c.relative_humidity_2m}% RH &nbsp;
+        🌧 ${c.precipitation}mm`;
+    } catch(e) { /* silent fail if offline */ }
+  }, () => {/* permission denied — skip */});
+}
+
+// ── Set image and enable analyse button ────────────────────────
+function setImage(src) {
+  preview.src = src;
+  preview.style.display = 'block';
+  removeBtn.style.display = 'flex';
+  analyseBtn.disabled = !session;
+  document.getElementById('resultCard').style.display = 'none';
+  clearError();
+  const img = new Image();
+  img.src = src;
+  img.onload = () => { activeImage = img; };
+}
+
+// ── File input ─────────────────────────────────────────────────
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => setImage(ev.target.result);
+  reader.readAsDataURL(file);
+});
+
+// ── Drag & drop ────────────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => setImage(ev.target.result);
+  reader.readAsDataURL(file);
+});
+
+// ── Remove image ───────────────────────────────────────────────
+removeBtn.addEventListener('click', () => {
+  preview.style.display = 'none';
+  removeBtn.style.display = 'none';
+  analyseBtn.disabled = true;
+  activeImage = null;
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+});
+
+// ── Camera ─────────────────────────────────────────────────────
+let camStream = null;
+const camModal  = document.getElementById('camModal');
+const camVideo  = document.getElementById('camVideo');
+const snapCanvas = document.getElementById('snapCanvas');
+
+document.getElementById('openCam').addEventListener('click', async () => {
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:720} }
+    });
+    camVideo.srcObject = camStream;
+    camModal.classList.add('open');
+  } catch(e) {
+    showError('Camera not available: ' + e.message);
+  }
+});
+
+document.getElementById('snapBtn').addEventListener('click', () => {
+  snapCanvas.width  = camVideo.videoWidth;
+  snapCanvas.height = camVideo.videoHeight;
+  snapCanvas.getContext('2d').drawImage(camVideo, 0, 0);
+  const dataUrl = snapCanvas.toDataURL('image/jpeg', 0.92);
+  setImage(dataUrl);
+  closeCam();
+});
+
+document.getElementById('closeCam').addEventListener('click', closeCam);
+function closeCam() {
+  camModal.classList.remove('open');
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+}
+
+// ── Analyse ────────────────────────────────────────────────────
+analyseBtn.addEventListener('click', async () => {
+  if (!activeImage || !session) return;
+  clearError();
+  analyseBtn.disabled = true;
+  showStatus(TR[lang].analysing);
+  try {
+    const preds = await runInference(activeImage);
+    hideStatus();
+    displayResults(preds);
+  } catch(e) {
+    hideStatus();
+    showError('Inference error: ' + e.message);
+    console.error(e);
+  } finally {
+    analyseBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
